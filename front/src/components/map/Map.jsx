@@ -8,6 +8,8 @@ import GoogleMap from 'google-map-react'
 import { css } from 'emotion'
 import axios from 'axios'
 
+import addSpacesToNumber from './../../utils/addSpacesToNumber'
+
 import DataPoint from './DataPoint'
 
 const flexRow = css`
@@ -104,8 +106,8 @@ export default class Map extends Component {
                         {currentDataItem &&
                             <div>
                                 <p>Год: {currentYear}</p>
-                                <p>Импорт: {currentDataItem.import} $</p>
-                                <p>Экспорт: {currentDataItem.export} $</p>
+                                <p>Импорт: {addSpacesToNumber(currentDataItem.import)} $</p>
+                                <p>Экспорт: {addSpacesToNumber(currentDataItem.export)} $</p>
                             </div>
                         }
                     </CardText>
