@@ -9,7 +9,7 @@ import DataPoint from './DataPoint'
 
 
 const mapContainer = css`
-    height: 800px;
+    height: ${window.innerWidth * 0.4}px;
 `;
 
 export default class Map extends Component {
@@ -33,7 +33,7 @@ export default class Map extends Component {
                         lon: 84.948179,
                         lat: 56.48466
                     },
-                    radius: 10,
+                    radius: 50,
                     amount: 1000000
                 },
                 {
