@@ -5,7 +5,7 @@ import { css } from 'emotion'
 
 import AppBar from 'material-ui/AppBar';
 
-import Map from './Map'
+import Map from './map/Map'
 
 
 const container = css`
