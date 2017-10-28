@@ -13,7 +13,10 @@ export default class DataPoint extends Component {
         };
 
         return(
-            <div style={greatPlaceStyle}>
+            <div
+                style={greatPlaceStyle}
+                onClick={this.props.onClick}
+            >
                 <svg>
                     <circle cx={radius} cy={radius} r={radius} fill="red" />
                 </svg>

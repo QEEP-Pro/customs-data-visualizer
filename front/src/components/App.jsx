@@ -1,12 +1,14 @@
 import React from 'react'
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 import Main from './Main'
 
 
 const App = () => (
-    <div>
+    <MuiThemeProvider>
         <Main />
-    </div>
+    </MuiThemeProvider>
 );
 
 export default App

@@ -1,14 +1,25 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
+import { css } from 'emotion'
+
+import AppBar from 'material-ui/AppBar';
+
 import Map from './Map'
 
 
+const container = css`
+    padding: 3rem;
+`;
+
 const Main = () => (
     <main>
-        <Switch>
-            <Route exact path='/' component={Map} />
-        </Switch>
+        <AppBar title="QEEP-Pro OpenData" showMenuIconButton={false} />
+        <div className={container}>
+            <Switch>
+                <Route exact path='/' component={Map} />
+            </Switch>
+        </div>
     </main>
 );
 
