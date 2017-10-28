@@ -9,7 +9,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "express": "^4.16.2",
+    "multi-geocoder": "^0.1.6",
     "mysql": "^2.15.0",
     "node-geocoder": "^3.21.0"
   }
