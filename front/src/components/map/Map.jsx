@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 
 import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card'
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton'
-import {Link} from 'react-router-dom'
+import Slider from 'material-ui/Slider';
 
 import GoogleMap from 'google-map-react'
 import { css } from 'emotion'
@@ -12,23 +13,6 @@ import addSpacesToNumber from './../../utils/addSpacesToNumber'
 
 import DataPoint from './DataPoint'
 
-const flexRow = css`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-`;
-
-const mainColumn = css`
-    width: calc(70% - 1rem);
-`;
-
-const asideColumn = css`
-    width: calc(30% - 1rem);
-`;
-
-const mapContainer = css`
-    height: ${window.innerWidth * 0.4}px;
-`;
 
 export default class Map extends Component {
     constructor() {
@@ -45,7 +29,10 @@ export default class Map extends Component {
 
     componentWillMount() {
         this.setState({
-            ranges: [1999, 2000, 2001],
+            ranges: {
+                start: 1999,
+                end: (new Date()).getFullYear(),
+            },
             dataItems: [
                 {
                     city: {
@@ -53,9 +40,14 @@ export default class Map extends Component {
                         lon: 84.948179,
                         lat: 56.48466
                     },
-                    radius: 50,
-                    import: 1000000,
-                    export: 1444444,
+                    import: {
+                        radius: 30,
+                        amount: 123432234534,
+                    },
+                    export: {
+                        radius: 50,
+                        amount: 432454353423,
+                    },
                 },
                 {
                     city: {
@@ -63,16 +55,21 @@ export default class Map extends Component {
                         lon: 86.084787,
                         lat: 67.23976
                     },
-                    radius: 10,
-                    import: 23213,
-                    export: 34234,
+                    import: {
+                        radius: 10,
+                        amount: 12343223,
+                    },
+                    export: {
+                        radius: 23,
+                        amount: 432423,
+                    },
                 }
             ]
         });
     }
 
     render() {
-        const {dataItems, currentDataItem, currentYear} = this.state;
+        const {dataItems, currentDataItem, currentYear, currentMetric} = this.state;
 
         return (
             <div className={flexRow}>
@@ -81,15 +78,15 @@ export default class Map extends Component {
                         <div className={mapContainer}>
                             <GoogleMap
                                 center={[67.239763, 86.084787]}
-                                zoom={3}
+                                zoom={1}
                             >
                                 {dataItems && dataItems.map((dataItem, index) =>
                                     <DataPoint
                                         key={index}
                                         lat={dataItem.city.lat}
                                         lng={dataItem.city.lon}
-                                        radius={dataItem.radius}
-                                        amount={dataItem.amount}
+                                        radius={dataItem[currentMetric].radius}
+                                        amount={dataItem[currentMetric].amount}
                                         onClick={() => this.setState({currentDataItem: dataItem})}
                                     />
                                 )}
@@ -97,26 +94,84 @@ export default class Map extends Component {
                         </div>
                     </CardMedia>
                 </Card>
-                <Card className={asideColumn}>
-                    <CardTitle
-                        title={currentDataItem ? currentDataItem.city.name : 'Выберите регион'}
-                        subtitle={'Данные'}
-                    />
-                    <CardText>
-                        {currentDataItem &&
-                            <div>
-                                <p>Год: {currentYear}</p>
-                                <p>Импорт: {addSpacesToNumber(currentDataItem.import)} $</p>
-                                <p>Экспорт: {addSpacesToNumber(currentDataItem.export)} $</p>
+                <div className={asideColumn}>
+                    <Card className={cardWithMargins}>
+                        <CardActions>
+                            <div className={flexRow}>
+                                <p>{this.state.ranges.start}</p>
+                                <p>{currentYear}</p>
+                                <p>{this.state.ranges.end}</p>
                             </div>
-                        }
-                    </CardText>
-                    <CardActions>
-                        <FlatButton label={'Подробнее'} />
-                    </CardActions>
-                </Card>
-            </div>
-        )
 
+                            <div className={fullColumn}>
+                                <Slider
+                                    min={this.state.ranges.start}
+                                    max={this.state.ranges.end}
+                                    step={1}
+                                    value={currentYear}
+                                    onChange={ (event, value) => this.setState({currentYear: value}) }
+                                />
+                            </div>
+
+                            <RadioButtonGroup
+                                name="metrics"
+                                defaultSelected={this.state.currentMetric}
+                                onChange={(event, value) => this.setState({currentMetric: value})}
+                            >
+                                <RadioButton value="import" label="Импорт" />
+                                <RadioButton value="export" label="Экспорт" />
+                            </RadioButtonGroup>
+                        </CardActions>
+                    </Card>
+
+                    <Card>
+                        <CardTitle
+                            title={currentDataItem ? currentDataItem.city.name : 'Выберите регион'}
+                            subtitle={'Данные'}
+                        />
+                        <CardText>
+                            {currentDataItem &&
+                                <div>
+                                    <p>Импорт: {addSpacesToNumber(currentDataItem.import.amount)} $</p>
+                                    <p>Экспорт: {addSpacesToNumber(currentDataItem.export.amount)} $</p>
+                                </div>
+                            }
+
+                        </CardText>
+                        <CardActions>
+                            {currentDataItem &&
+                                <FlatButton label={'Подробнее'}/>
+                            }
+                        </CardActions>
+                    </Card>
+                </div>
+            </div>
+        );
     }
 }
+
+const flexRow = css`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+`;
+
+const mainColumn = css`
+    width: calc(70% - 1rem);
+`;
+
+const asideColumn = css`
+    width: calc(30% - 1rem);
+`;
+
+const fullColumn = css`
+    width: 100%;
+`;
+
+const mapContainer = css`
+    height: ${window.innerWidth * 0.4}px;
+`;
+
+const cardWithMargins = css`
+    margin-bottom: 2rem;
+`;
