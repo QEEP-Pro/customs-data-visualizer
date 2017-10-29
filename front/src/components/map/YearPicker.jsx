@@ -4,6 +4,7 @@ import { css } from 'emotion'
 
 import {Card, CardText} from 'material-ui/Card'
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
+import Checkbox from 'material-ui/Checkbox'
 import Slider from 'material-ui/Slider'
 
 
@@ -34,6 +35,13 @@ const YearPicker = (props) => (
                 <RadioButton value="import" label="Импорт" />
                 <RadioButton value="export" label="Экспорт" />
             </RadioButtonGroup>
+
+            <br/>
+            <Checkbox
+                label="Скрыть Москву и Санкт-Петурбург"
+                checked={props.regional}
+                onCheck={props.handleUpdateRegional}
+            />
         </CardText>
     </Card>
 );

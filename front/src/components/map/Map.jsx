@@ -19,6 +19,8 @@ export default class Map extends Component {
                 start: (new Date()).getFullYear() - 1,
                 end: (new Date()).getFullYear()
             },
+            regional: true,
+            fetched: false,
             currentYear: (new Date()).getFullYear(),
             currentMetric: 'import',
             dataItems: [],
@@ -28,7 +30,7 @@ export default class Map extends Component {
 
     componentWillMount() {
         const year = this.state.currentYear;
-        const oldDataItems = this.state.dataItems;
+        const regional = this.state.regional;
 
         fetchRange().then(data => this.setState({
             range: {
@@ -37,14 +39,7 @@ export default class Map extends Component {
             },
         }));
 
-        fetchDataList(year).then(data => this.setState({
-            dataItems: oldDataItems.concat(
-                data.map((item => ({
-                    ...item,
-                    year,
-                })))
-            )
-        }));
+        this.updateData(year, regional);
     }
 
     render() {
@@ -55,7 +50,7 @@ export default class Map extends Component {
             .find(dataItem => dataItem.city.uid === currentCityId);
 
         let data;
-        if (dataItems.filter(item => item.year === currentYear).length !== 0) {
+        if (this.state.fetched) {
             data = dataItems.filter(item => item.year === currentYear);
         } else {
             data = [];
@@ -76,8 +71,10 @@ export default class Map extends Component {
                         range={this.state.range}
                         year={this.state.currentYear}
                         metric={this.state.currentMetric}
+                        regional={this.state.regional}
                         handleChangeYear={this.handleChangeYear}
                         handleChangeMetric={ (value) => this.setState({currentMetric: value}) }
+                        handleUpdateRegional={this.handleChangeRegional}
                     />
 
                     <CityShortInfo dataItem={currentDataItem} year={currentYear} />
@@ -87,14 +84,31 @@ export default class Map extends Component {
     }
 
     handleChangeYear = (year) => {
-        fetchDataList(year).then(data => this.setState({
+        const regional = this.state.regional;
+
+        this.updateData(year, regional);
+
+        this.setState({currentYear: year});
+    };
+
+    handleChangeRegional = (_, regional) => {
+        const year = this.state.currentYear;
+
+        this.updateData(year, regional);
+
+        this.setState({regional: regional});
+    };
+
+    updateData = (year, regional) => {
+        this.setState({ fetched: false });
+
+        fetchDataList(year, regional).then(data => this.setState({
+            fetched: true,
             dataItems: data.map((item => ({
                 ...item,
                 year,
             })))
         }));
-
-        this.setState({currentYear: year});
     };
 }
 
