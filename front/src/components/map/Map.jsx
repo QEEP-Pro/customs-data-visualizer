@@ -1,17 +1,13 @@
 import React, {Component} from 'react'
-import {Link} from 'react-router-dom'
 
-import GoogleMap from 'google-map-react'
 import { css } from 'emotion'
 
-import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card'
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
-import Slider from 'material-ui/Slider'
 
-import addSpacesToNumber from '../../utils/addSpacesToNumber'
 import {fetchRange} from '../../utils/api'
 
-import DataPoint from './DataPoint'
+import CityShortInfo from './CityShortInfo'
+import YearPicker from './YearPicker'
+import GoogleMap from './GoogleMap'
 
 
 export default class Map extends Component {
@@ -102,79 +98,25 @@ export default class Map extends Component {
 
         return (
             <div className={flexRow}>
-                <Card className={mainColumn}>
-                    <CardMedia>
-                        <div className={mapContainer}>
-                            <GoogleMap
-                                center={[67.239763, 86.084787]}
-                                zoom={1}
-                                onChildClick={(_, child) => this.setState({currentCityId: child.cityId})}
-                            >
-                                {dataItems.filter(item => item.year === currentYear).map((dataItem, index) =>
-                                    <DataPoint
-                                        key={index}
-                                        lat={dataItem.city.lat}
-                                        lng={dataItem.city.lon}
-                                        radius={dataItem[currentMetric].radius}
-                                        amount={dataItem[currentMetric].amount}
-                                        cityId={dataItem.city.id}
-                                        active={currentDataItem && dataItem.city.id === currentCityId}
-                                        color={getMetricColor(currentMetric)}
-                                    />
-                                )}
-                            </GoogleMap>
-                        </div>
-                    </CardMedia>
-                </Card>
+                <div className={mainColumn}>
+                    <GoogleMap
+                        metric={currentMetric}
+                        data={dataItems.filter(item => item.year === currentYear)}
+                        currentDataItem={currentDataItem}
+
+                        handleChildClick={(_, child) => this.setState({currentCityId: child.cityId})}
+                    />
+                </div>
                 <div className={asideColumn}>
-                    <Card className={cardWithMargins}>
-                        <CardText>
-                            <div className={bottomFlexRow}>
-                                <p>{this.state.range.start}</p>
-                                <p className={largeText}>{currentYear}</p>
-                                <p>{this.state.range.end}</p>
-                            </div>
+                    <YearPicker
+                        range={this.state.range}
+                        year={this.state.currentYear}
+                        metric={this.state.currentMetric}
+                        handleChangeYear={this.handleChangeYear}
+                        handleChangeMetric={ (value) => this.setState({currentMetric: value}) }
+                    />
 
-                            <div className={fullColumn}>
-                                <Slider
-                                    min={this.state.range.start}
-                                    max={this.state.range.end}
-                                    step={1}
-                                    value={currentYear}
-                                    onChange={ (event, value) => this.handleChangeYear(value) }
-                                />
-                            </div>
-
-                            <RadioButtonGroup
-                                name="metrics"
-                                defaultSelected={this.state.currentMetric}
-                                onChange={(event, value) => this.setState({currentMetric: value})}
-                            >
-                                <RadioButton value="import" label="Импорт" />
-                                <RadioButton value="export" label="Экспорт" />
-                            </RadioButtonGroup>
-                        </CardText>
-                    </Card>
-
-                    <Card>
-                        <CardTitle
-                            title={currentDataItem ? currentDataItem.city.name : 'Выберите регион'}
-                            subtitle={currentDataItem ? `Данные за ${currentYear} год` : null}
-                        />
-                        <CardText>
-                            {currentDataItem &&
-                                <div>
-                                    <p>Импорт <span className={largeText}>{addSpacesToNumber(currentDataItem.import.amount)}</span> $</p>
-                                    <p>Экспорт <span className={largeText}>{addSpacesToNumber(currentDataItem.export.amount)}</span> $</p>
-                                </div>
-                            }
-                        </CardText>
-                        <CardActions>
-                            {currentDataItem &&
-                                <Link to={`/detail/${currentCityId}`}>Подробнее</Link>
-                            }
-                        </CardActions>
-                    </Card>
+                    <CityShortInfo dataItem={currentDataItem} year={currentYear} />
                 </div>
             </div>
         );
@@ -186,21 +128,10 @@ export default class Map extends Component {
     }
 }
 
-const getMetricColor = (metric) => ({
-    import: '#9fa8da',
-    export: '#ffe082'
-}[metric]);
-
 const flexRow = css`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-`;
-const bottomFlexRow = css`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
 `;
 
 const mainColumn = css`
@@ -211,18 +142,4 @@ const asideColumn = css`
     width: calc(30% - 1rem);
 `;
 
-const fullColumn = css`
-    width: 100%;
-`;
 
-const mapContainer = css`
-    height: ${window.innerWidth * 0.4}px;
-`;
-
-const cardWithMargins = css`
-    margin-bottom: 2rem;
-`;
-
-const largeText = css`
-    font-size: 1.2rem;
-`;
