@@ -155,11 +155,17 @@ Api.prototype.getRegionalData = function(region) {
 
             data[toplevel] = data[toplevel] || Object.assign({}, dataObj);
 
-            totals[row.year] = totals[row.year] || Object.assign({}, dataObj);
+            totals[row.year] = totals[row.year] || Object.assign({
+                countries: {}
+            }, dataObj);
 
             data[toplevel][row.year] = data[toplevel][row.year] || Object.assign({
-                unit: row.unit
+                unit: row.unit,
+                countries: {}
             }, dataObj);
+
+            data[toplevel][row.year].countries[row.country] = data[toplevel][row.year].countries[row.country] || Object.assign({}, dataObj);
+            totals[row.year].countries[row.country] = totals[row.year].countries[row.country] || Object.assign({}, dataObj);
 
             menu[toplevel] = menu[toplevel] || {};
 
@@ -168,15 +174,23 @@ Api.prototype.getRegionalData = function(region) {
                 data[toplevel].export.quantity += row.quantity;
                 data[toplevel][row.year].export.amount += row.total;
                 data[toplevel][row.year].export.quantity += row.quantity;
+                data[toplevel][row.year].countries[row.country].export.amount += row.total;
+                data[toplevel][row.year].countries[row.country].export.quantity += row.quantity;
                 totals[row.year].export.amount += row.total;
                 totals[row.year].export.quantity += row.quantity;
+                totals[row.year].countries[row.country].export.amount += row.total;
+                totals[row.year].countries[row.country].export.quantity += row.quantity;
             } else {
                 data[toplevel].import.amount += row.total;
                 data[toplevel].import.quantity += row.quantity;
                 data[toplevel][row.year].import.amount += row.total;
                 data[toplevel][row.year].import.quantity += row.quantity;
+                data[toplevel][row.year].countries[row.country].import.amount += row.total;
+                data[toplevel][row.year].countries[row.country].import.quantity += row.quantity;
                 totals[row.year].import.amount += row.total;
                 totals[row.year].import.quantity += row.quantity;
+                totals[row.year].countries[row.country].import.amount += row.total;
+                totals[row.year].countries[row.country].import.quantity += row.quantity;
             }
 
             if (/^\d{2}0*$/.test(row.tnved)) {
