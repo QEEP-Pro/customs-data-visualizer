@@ -14,6 +14,7 @@ const GoogleMapWrapper = (props) => (
         <CardMedia>
             <div className={mapContainer}>
                 <GoogleMap
+                    apiKey={'AIzaSyBujuD_AcnBbtT_dCNkkwNTg_vLzO7hqPI'}
                     center={[67.239763, 86.084787]}
                     zoom={1}
                     onChildClick={props.handleChildClick}
