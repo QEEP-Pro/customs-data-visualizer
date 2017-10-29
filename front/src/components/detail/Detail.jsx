@@ -62,12 +62,14 @@ export default class Detail extends Component {
                         {categories}
                     </List>
                 </Card>
-                <Card className={mainColumn}>
-                    {this.state.activeCategory && <CardTitle title={this.state.activeCategory.name}/>}
-                    <CardMedia>
-                        {lineChart}
-                    </CardMedia>
-                </Card>
+                <div className={mainColumn}>
+                    <Card>
+                        {this.state.activeCategory && <CardTitle title={this.state.activeCategory.name}/>}
+                        <CardMedia>
+                            {lineChart}
+                        </CardMedia>
+                    </Card>
+                </div>
             </div>
         )
     }
@@ -94,10 +96,14 @@ const LineChart = (props) => (
                 {
                     label: 'Импорт',
                     data: getImportData(props.data),
+                    borderColor: 'rgba(159, 168, 218, 1)',
+                    backgroundColor: 'rgba(159, 168, 218, 0.3)',
                 },
                 {
                     label: 'Экспорт',
                     data: getExportData(props.data),
+                    borderColor: 'rgba(255, 224, 130, 1)',
+                    backgroundColor: 'rgba(255, 224, 130, 0.3)',
                 }
             ]
         }}
