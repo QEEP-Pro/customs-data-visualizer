@@ -136,6 +136,7 @@ Api.prototype.getRegionalData = function(region) {
 
         var data = {};
         var menu = {};
+        var totals = {};
 
         results.forEach(function(row) {
 
@@ -154,6 +155,8 @@ Api.prototype.getRegionalData = function(region) {
 
             data[toplevel] = data[toplevel] || Object.assign({}, dataObj);
 
+            totals[row.year] = totals[row.year] || Object.assign({}, dataObj);
+
             data[toplevel][row.year] = data[toplevel][row.year] || Object.assign({
                 unit: row.unit
             }, dataObj);
@@ -165,11 +168,15 @@ Api.prototype.getRegionalData = function(region) {
                 data[toplevel].export.quantity += row.quantity;
                 data[toplevel][row.year].export.amount += row.total;
                 data[toplevel][row.year].export.quantity += row.quantity;
+                totals[row.year].export.amount += row.total;
+                totals[row.year].export.quantity += row.quantity;
             } else {
                 data[toplevel].import.amount += row.total;
                 data[toplevel].import.quantity += row.quantity;
                 data[toplevel][row.year].import.amount += row.total;
                 data[toplevel][row.year].import.quantity += row.quantity;
+                totals[row.year].import.amount += row.total;
+                totals[row.year].import.quantity += row.quantity;
             }
 
             if (/^\d{2}0*$/.test(row.tnved)) {
@@ -186,7 +193,8 @@ Api.prototype.getRegionalData = function(region) {
 
         return {
             data: data,
-            menu: menuArr
+            menu: menuArr,
+            totals: totals
         };
     });
 };
