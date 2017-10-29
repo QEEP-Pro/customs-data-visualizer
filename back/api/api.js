@@ -103,11 +103,9 @@ Api.prototype.getYearlyData = function(year, regional) {
 
                 } else {
                     console.log('geocode is not cached: ' + city);
-                    return acc;
                 }
             } else {
                 console.log('unknown OKATO: ' + okato);
-                return acc;
             }
         });
         
