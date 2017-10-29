@@ -134,7 +134,8 @@ Api.prototype.getRegionalData = function(region) {
 
     return this.data.getRegionalData(region).then(function(results) {
 
-        var obj = {};
+        var data = {};
+        var menu = {};
 
         results.forEach(function(row) {
 
@@ -149,32 +150,44 @@ Api.prototype.getRegionalData = function(region) {
                 }
             };
 
-            obj[row.year] = obj[row.year] || Object.assign({}, dataObj);
+            data[row.year] = data[row.year] || Object.assign({}, dataObj);
 
             const toplevel = row.tnved.slice(0,2);
 
-            obj[row.year][toplevel] = obj[row.year][toplevel] || Object.assign({
+            data[row.year][toplevel] = data[row.year][toplevel] || Object.assign({
                 unit: row.unit
             }, dataObj);
 
+            menu[toplevel] = menu[toplevel] || {};
+
             if (row.export) {
-                obj[row.year].export.amount += row.total;
-                obj[row.year].export.quantity += row.quantity;
-                obj[row.year][toplevel].export.amount += row.total;
-                obj[row.year][toplevel].export.quantity += row.quantity;
+                data[row.year].export.amount += row.total;
+                data[row.year].export.quantity += row.quantity;
+                data[row.year][toplevel].export.amount += row.total;
+                data[row.year][toplevel].export.quantity += row.quantity;
             } else {
-                obj[row.year].import.amount += row.total;
-                obj[row.year].import.quantity += row.quantity;
-                obj[row.year][toplevel].import.amount += row.total;
-                obj[row.year][toplevel].import.quantity += row.quantity;
+                data[row.year].import.amount += row.total;
+                data[row.year].import.quantity += row.quantity;
+                data[row.year][toplevel].import.amount += row.total;
+                data[row.year][toplevel].import.quantity += row.quantity;
             }
 
             if (/^\d{2}0*$/.test(row.tnved)) {
-                obj[row.year][toplevel].name = row.name;
+                data[row.year][toplevel].name = row.name;
+                menu[toplevel].name = row.name;
             }
         });
 
-        return obj;
+        var menuArr = [];
+
+        for (k in menu) {
+            menuArr.push(Object.assign({ uid: k }, menu[k]));
+        }
+
+        return {
+            data: data,
+            menu: menuArr
+        };
     });
 };
 
