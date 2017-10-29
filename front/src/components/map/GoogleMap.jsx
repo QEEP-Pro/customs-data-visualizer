@@ -18,7 +18,6 @@ const GoogleMapWrapper = (props) => (
                     zoom={1}
                     onChildClick={props.handleChildClick}
                 >
-                    {console.log(props)}
                     {props.data.map((dataItem, index) =>
                         <DataPoint
                             key={index}
