@@ -49,6 +49,12 @@ app.get('/data', function(req, res) {
     });
 });
 
+app.get('/region', function(req, res) {
+    api.getRegionalData(req.query.uid).then(function(results) {
+        res.json(results);
+    });
+});
+
 app.listen(port, function () {
     console.log("Running on port: " + port)
 });

@@ -129,23 +129,54 @@ Api.prototype.getYearlyData = function(year, regional) {
 
 };
 
-// Api.prototype.getRegionalData = function(region) {
-//     const self = this;
-//
-//     return this.data.getRegionalData(region).then(function(results) {
-//
-//         var obj = {};
-//
-//         results.forEach(function(row) {
-//
-//             obj[row.year] = obj[row.year] || {};
-//
-//
-//
-//         });
-//
-//     });
-// };
+Api.prototype.getRegionalData = function(region) {
+    const self = this;
+
+    return this.data.getRegionalData(region).then(function(results) {
+
+        var obj = {};
+
+        results.forEach(function(row) {
+
+            const dataObj = {
+                import: {
+                    amount: 0,
+                    quantity: 0
+                },
+                export: {
+                    amount: 0,
+                    quantity: 0
+                }
+            };
+
+            obj[row.year] = obj[row.year] || Object.assign({}, dataObj);
+
+            const toplevel = row.tnved.slice(0,2);
+
+            obj[row.year][toplevel] = obj[row.year][toplevel] || Object.assign({
+                unit: row.unit
+            }, dataObj);
+
+            if (row.export) {
+                obj[row.year].export.amount += row.total;
+                obj[row.year].export.quantity += row.quantity;
+                obj[row.year][toplevel].export.amount += row.total;
+                obj[row.year][toplevel].export.quantity += row.quantity;
+            } else {
+                obj[row.year].import.amount += row.total;
+                obj[row.year].import.quantity += row.quantity;
+                obj[row.year][toplevel].import.amount += row.total;
+                obj[row.year][toplevel].import.quantity += row.quantity;
+            }
+
+            if (/^\d{2}0*$/.test(row.tnved)) {
+                obj[row.year][toplevel].name = row.name;
+            }
+        });
+
+        return obj;
+    });
+};
 
 Api.prototype.getRadius = function(amount, max, min) {
     const radiusRange = maxRadius - minRadius;

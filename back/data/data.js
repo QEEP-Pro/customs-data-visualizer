@@ -47,21 +47,25 @@ Data.prototype.getYearlyData = function(year, regional) {
     });
 };
 
-// Data.prototype.getRegionalData = function(region) {
-//     var sql = "SELECT sum(STOIM), sum(KOL), max(EDI), NAPR FROM TBCT WHERE REGION LIKE ? GROUP BY TNVED, NAPR, PERIOD";
-//
-//     return this.query(sql, [region + '%']).then(function(results) {
-//         return results.map(function(row) {
-//             return {
-//                 total: row['sum(STOIM)'],
-//                 tnved: row['TNVED'],
-//                 year: row['PERIOD'],
-//                 export: row['NAPR'] == 'ЭК',
-//                 quantity: row['KOL'],
-//                 unit: row['max(EDI)']
-//             }
-//         });
-//     });
-// };
+Data.prototype.getRegionalData = function(region) {
+    var sql =
+        "SELECT sum(STOIM), sum(KOL), max(EDIZM), NAPR, TNVED, PERIOD, SIMPLE_NAM FROM TCBT " +
+        "JOIN THBED on TNVED = KOD " +
+        "WHERE REGION LIKE ? GROUP BY TNVED, NAPR, PERIOD";
+
+    return this.query(sql, [region + '%']).then(function(results) {
+        return results.map(function(row) {
+            return {
+                total: row['sum(STOIM)'],
+                tnved: row['TNVED'],
+                name: row['SIMPLE_NAM'],
+                year: row['PERIOD'],
+                export: row['NAPR'] == 'ЭК',
+                quantity: row['sum(KOL)'],
+                unit: row['max(EDIZM)']
+            }
+        });
+    });
+};
 
 module.exports = Data;
