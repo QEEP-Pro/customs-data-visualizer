@@ -13,8 +13,9 @@ const container = css`
     padding: 3rem;
 `;
 
-const Main = () => (
+const Main = ({router}) => (
     <main>
+        {console.log(router)}
         <AppBar title="QEEP-Pro OpenData" showMenuIconButton={false} />
         <div className={container}>
             <Switch>

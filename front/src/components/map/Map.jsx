@@ -50,22 +50,23 @@ export default class Map extends Component {
     render() {
         const {dataItems, currentCityId, currentYear, currentMetric} = this.state;
 
-        if (dataItems.length === 0) {
-            return false;
-        }
-
-        console.log(dataItems);
-
         const currentDataItem = dataItems
             .filter(item => item.year === currentYear)
             .find(dataItem => dataItem.city.uid === currentCityId);
+
+        let data;
+        if (dataItems.filter(item => item.year === currentYear).length !== 0) {
+            data = dataItems.filter(item => item.year === currentYear);
+        } else {
+            data = [];
+        }
 
         return (
             <div className={flexRow}>
                 <div className={mainColumn}>
                     <GoogleMap
                         metric={currentMetric}
-                        data={dataItems.filter(item => item.year === currentYear)}
+                        data={data}
                         currentDataItem={currentDataItem}
                         handleChildClick={ (_, child) => this.setState({currentCityId: child.cityId}) }
                     />
@@ -86,9 +87,15 @@ export default class Map extends Component {
     }
 
     handleChangeYear = (year) => {
-        // TODO: fetch new data and save
-        this.setState({currentYear: year})
-    }
+        fetchDataList(year).then(data => this.setState({
+            dataItems: data.map((item => ({
+                ...item,
+                year,
+            })))
+        }));
+
+        this.setState({currentYear: year});
+    };
 }
 
 const flexRow = css`
