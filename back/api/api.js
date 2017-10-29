@@ -54,11 +54,11 @@ const Api = function(config) {
     this.geocoder = config.geocoder;
 };
 
-Api.prototype.getYearlyData = function(year) {
+Api.prototype.getYearlyData = function(year, regional) {
 
     const self = this;
 
-    return this.data.getYearlyData(year).then(function(results) {
+    return this.data.getYearlyData(year, regional).then(function(results) {
 
         const totals = results.map(function(row) { return row.total });
 
@@ -130,6 +130,24 @@ Api.prototype.getYearlyData = function(year) {
     });
 
 };
+
+// Api.prototype.getRegionalData = function(region) {
+//     const self = this;
+//
+//     return this.data.getRegionalData(region).then(function(results) {
+//
+//         var obj = {};
+//
+//         results.forEach(function(row) {
+//
+//             obj[row.year] = obj[row.year] || {};
+//
+//
+//
+//         });
+//
+//     });
+// };
 
 Api.prototype.getRadius = function(amount, max, min) {
     const radiusRange = maxRadius - minRadius;
