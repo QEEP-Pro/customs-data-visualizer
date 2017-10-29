@@ -45,16 +45,9 @@ export default class Map extends Component {
     render() {
         const {dataItems, currentCityId, currentYear, currentMetric} = this.state;
 
-        const currentDataItem = dataItems
-            .filter(item => item.year === currentYear)
-            .find(dataItem => dataItem.city.uid === currentCityId);
+        const data = this.state.fetched ? dataItems.filter(item => item.year === currentYear) : [];
 
-        let data;
-        if (this.state.fetched) {
-            data = dataItems.filter(item => item.year === currentYear);
-        } else {
-            data = [];
-        }
+        const currentDataItem = this.state.fetched ? data.find(dataItem => dataItem.city.uid === currentCityId) : null;
 
         return (
             <div className={flexRow}>
@@ -64,6 +57,7 @@ export default class Map extends Component {
                         data={data}
                         currentDataItem={currentDataItem}
                         handleChildClick={ (_, child) => this.setState({currentCityId: child.cityId}) }
+                        currentCityId={currentCityId}
                     />
                 </div>
                 <div className={asideColumn}>
