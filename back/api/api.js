@@ -150,30 +150,30 @@ Api.prototype.getRegionalData = function(region) {
                 }
             };
 
-            data[row.year] = data[row.year] || Object.assign({}, dataObj);
-
             const toplevel = row.tnved.slice(0,2);
 
-            data[row.year][toplevel] = data[row.year][toplevel] || Object.assign({
+            data[toplevel] = data[toplevel] || Object.assign({}, dataObj);
+
+            data[toplevel][row.year] = data[toplevel][row.year] || Object.assign({
                 unit: row.unit
             }, dataObj);
 
             menu[toplevel] = menu[toplevel] || {};
 
             if (row.export) {
-                data[row.year].export.amount += row.total;
-                data[row.year].export.quantity += row.quantity;
-                data[row.year][toplevel].export.amount += row.total;
-                data[row.year][toplevel].export.quantity += row.quantity;
+                data[toplevel].export.amount += row.total;
+                data[toplevel].export.quantity += row.quantity;
+                data[toplevel][row.year].export.amount += row.total;
+                data[toplevel][row.year].export.quantity += row.quantity;
             } else {
-                data[row.year].import.amount += row.total;
-                data[row.year].import.quantity += row.quantity;
-                data[row.year][toplevel].import.amount += row.total;
-                data[row.year][toplevel].import.quantity += row.quantity;
+                data[toplevel].import.amount += row.total;
+                data[toplevel].import.quantity += row.quantity;
+                data[toplevel][row.year].import.amount += row.total;
+                data[toplevel][row.year].import.quantity += row.quantity;
             }
 
             if (/^\d{2}0*$/.test(row.tnved)) {
-                data[row.year][toplevel].name = row.name;
+                data[toplevel].name = row.name;
                 menu[toplevel].name = row.name;
             }
         });
