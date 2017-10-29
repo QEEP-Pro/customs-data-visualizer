@@ -36,12 +36,13 @@ export default class Map extends Component {
             dataItems: [
                 {
                     city: {
+                        id: 1,
                         name: 'Tomks',
                         lon: 84.948179,
                         lat: 56.48466
                     },
                     import: {
-                        radius: 30,
+                        radius: 20,
                         amount: 123432234534,
                     },
                     export: {
@@ -51,12 +52,13 @@ export default class Map extends Component {
                 },
                 {
                     city: {
+                        id: 5,
                         name: 'City N',
                         lon: 86.084787,
                         lat: 67.23976
                     },
                     import: {
-                        radius: 10,
+                        radius: 2,
                         amount: 12343223,
                     },
                     export: {
@@ -87,6 +89,8 @@ export default class Map extends Component {
                                         lng={dataItem.city.lon}
                                         radius={dataItem[currentMetric].radius}
                                         amount={dataItem[currentMetric].amount}
+                                        active={currentDataItem && dataItem.city.id === currentDataItem.city.id}
+                                        color={getMetricColor(currentMetric)}
                                         onClick={() => this.setState({currentDataItem: dataItem})}
                                     />
                                 )}
@@ -96,10 +100,10 @@ export default class Map extends Component {
                 </Card>
                 <div className={asideColumn}>
                     <Card className={cardWithMargins}>
-                        <CardActions>
-                            <div className={flexRow}>
+                        <CardText>
+                            <div className={bottomFlexRow}>
                                 <p>{this.state.ranges.start}</p>
-                                <p>{currentYear}</p>
+                                <p className={largeText}>{currentYear}</p>
                                 <p>{this.state.ranges.end}</p>
                             </div>
 
@@ -109,7 +113,7 @@ export default class Map extends Component {
                                     max={this.state.ranges.end}
                                     step={1}
                                     value={currentYear}
-                                    onChange={ (event, value) => this.setState({currentYear: value}) }
+                                    onChange={ (event, value) => this.handleChangeYear(value) }
                                 />
                             </div>
 
@@ -121,7 +125,7 @@ export default class Map extends Component {
                                 <RadioButton value="import" label="Импорт" />
                                 <RadioButton value="export" label="Экспорт" />
                             </RadioButtonGroup>
-                        </CardActions>
+                        </CardText>
                     </Card>
 
                     <Card>
@@ -148,12 +152,28 @@ export default class Map extends Component {
             </div>
         );
     }
+
+    handleChangeYear = (year) => {
+        // TODO: fetch new data and save
+        this.setState({currentYear: year})
+    }
 }
+
+const getMetricColor = (metric) => ({
+    import: '#9fa8da',
+    export: '#ffe082'
+}[metric]);
 
 const flexRow = css`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+`;
+const bottomFlexRow = css`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
 `;
 
 const mainColumn = css`
@@ -174,4 +194,8 @@ const mapContainer = css`
 
 const cardWithMargins = css`
     margin-bottom: 2rem;
+`;
+
+const largeText = css`
+    font-size: 1.5rem;
 `;

@@ -5,7 +5,11 @@ import { css } from 'emotion'
 
 export default class DataPoint extends Component {
     render() {
-        const {radius, color} = this.props
+        const {radius, color, active} = this.props;
+
+        const normalColor = color ? color : 'aqua';
+
+        const activeColor = '#f44336';
 
         const greatPlaceStyle = {
             position: 'absolute',
@@ -24,7 +28,7 @@ export default class DataPoint extends Component {
                 onClick={this.props.onClick}
             >
                 <svg>
-                    <circle cx={radius} cy={radius} r={radius} fill={color ? color : 'aqua'} />
+                    <circle cx={radius} cy={radius} r={radius} fill={active ? activeColor : normalColor} />
                 </svg>
             </div>
         )
@@ -36,5 +40,5 @@ const normalDot = css`
 
 const hoverDot = css`
     border-radius: 50%;
-    border: 2px solid;
+    border: 2px solid #9e9e9e;
 `;
