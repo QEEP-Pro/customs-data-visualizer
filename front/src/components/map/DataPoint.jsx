@@ -25,7 +25,6 @@ export default class DataPoint extends Component {
             <div
                 className={className}
                 style={greatPlaceStyle}
-                onClick={this.props.onClick}
             >
                 <svg>
                     <circle cx={radius} cy={radius} r={radius} fill={active ? activeColor : normalColor} />

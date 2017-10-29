@@ -83,6 +83,7 @@ export default class Map extends Component {
                             <GoogleMap
                                 center={[67.239763, 86.084787]}
                                 zoom={1}
+                                onChildClick={(_, child) => this.setState({currentCityId: child.cityId})}
                             >
                                 {dataItems && dataItems.map((dataItem, index) =>
                                     <DataPoint
@@ -91,9 +92,9 @@ export default class Map extends Component {
                                         lng={dataItem.city.lon}
                                         radius={dataItem[currentMetric].radius}
                                         amount={dataItem[currentMetric].amount}
+                                        cityId={dataItem.city.id}
                                         active={currentDataItem && dataItem.city.id === currentCityId}
                                         color={getMetricColor(currentMetric)}
-                                        onClick={() => this.setState({currentCityId: dataItem.city.id})}
                                     />
                                 )}
                             </GoogleMap>
