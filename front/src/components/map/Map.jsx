@@ -23,7 +23,7 @@ export default class Map extends Component {
             currentYear: (new Date()).getFullYear(),
             currentMetric: 'import',
             dataItems: [],
-            currentDataItem: null,
+            currentCityId: 0,
         }
     }
 
@@ -71,7 +71,9 @@ export default class Map extends Component {
     }
 
     render() {
-        const {dataItems, currentDataItem, currentYear, currentMetric} = this.state;
+        const {dataItems, currentCityId, currentYear, currentMetric} = this.state;
+
+        const currentDataItem = dataItems.find(dataItem => dataItem.city.id === currentCityId);
 
         return (
             <div className={flexRow}>
@@ -89,9 +91,9 @@ export default class Map extends Component {
                                         lng={dataItem.city.lon}
                                         radius={dataItem[currentMetric].radius}
                                         amount={dataItem[currentMetric].amount}
-                                        active={currentDataItem && dataItem.city.id === currentDataItem.city.id}
+                                        active={currentDataItem && dataItem.city.id === currentCityId}
                                         color={getMetricColor(currentMetric)}
-                                        onClick={() => this.setState({currentDataItem: dataItem})}
+                                        onClick={() => this.setState({currentCityId: dataItem.city.id})}
                                     />
                                 )}
                             </GoogleMap>
@@ -136,8 +138,8 @@ export default class Map extends Component {
                         <CardText>
                             {currentDataItem &&
                                 <div>
-                                    <p>Импорт: {addSpacesToNumber(currentDataItem.import.amount)} $</p>
-                                    <p>Экспорт: {addSpacesToNumber(currentDataItem.export.amount)} $</p>
+                                    <p>Импорт <span className={largeText}>{addSpacesToNumber(currentDataItem.import.amount)}</span> $</p>
+                                    <p>Экспорт <span className={largeText}>{addSpacesToNumber(currentDataItem.export.amount)}</span> $</p>
                                 </div>
                             }
 
@@ -197,5 +199,5 @@ const cardWithMargins = css`
 `;
 
 const largeText = css`
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 `;
