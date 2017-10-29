@@ -27,9 +27,13 @@ const getCurrentYear = function() {
     return new Date().getFullYear();
 };
 
+app.use(function (req, res, next) {
+    res.append('Access-Control-Allow-Origin', '*');
+    next();
+});
+
 app.get('/range', function (req, res) {
     data.getRange().then(function(result) {
-        res.append('Access-Control-Allow-Origin', '*');
         res.json({
             min: result.min,
             max: result.max
