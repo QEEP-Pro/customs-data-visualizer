@@ -1,15 +1,15 @@
 import React, {Component} from 'react'
-
-import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card'
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import FlatButton from 'material-ui/FlatButton'
-import Slider from 'material-ui/Slider';
+import {Link} from 'react-router-dom'
 
 import GoogleMap from 'google-map-react'
 import { css } from 'emotion'
-import axios from 'axios'
 
-import addSpacesToNumber from './../../utils/addSpacesToNumber'
+import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card'
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
+import Slider from 'material-ui/Slider'
+
+import addSpacesToNumber from '../../utils/addSpacesToNumber'
+import {fetchRange} from '../../utils/api'
 
 import DataPoint from './DataPoint'
 
@@ -19,7 +19,10 @@ export default class Map extends Component {
         super();
 
         this.state = {
-            ranges: [(new Date()).getFullYear()],
+            range: {
+                start: (new Date()).getFullYear() - 1,
+                end: (new Date()).getFullYear()
+            },
             currentYear: (new Date()).getFullYear(),
             currentMetric: 'import',
             dataItems: [],
@@ -28,11 +31,14 @@ export default class Map extends Component {
     }
 
     componentWillMount() {
-        this.setState({
-            ranges: {
-                start: 1999,
-                end: (new Date()).getFullYear(),
+        fetchRange().then(data => this.setState({
+            range: {
+                start: parseInt(data.min, 10),
+                end: parseInt(data.max, 10),
             },
+        }));
+
+        this.setState({
             dataItems: [
                 {
                     city: {
@@ -105,15 +111,15 @@ export default class Map extends Component {
                     <Card className={cardWithMargins}>
                         <CardText>
                             <div className={bottomFlexRow}>
-                                <p>{this.state.ranges.start}</p>
+                                <p>{this.state.range.start}</p>
                                 <p className={largeText}>{currentYear}</p>
-                                <p>{this.state.ranges.end}</p>
+                                <p>{this.state.range.end}</p>
                             </div>
 
                             <div className={fullColumn}>
                                 <Slider
-                                    min={this.state.ranges.start}
-                                    max={this.state.ranges.end}
+                                    min={this.state.range.start}
+                                    max={this.state.range.end}
                                     step={1}
                                     value={currentYear}
                                     onChange={ (event, value) => this.handleChangeYear(value) }
@@ -143,11 +149,10 @@ export default class Map extends Component {
                                     <p>Экспорт <span className={largeText}>{addSpacesToNumber(currentDataItem.export.amount)}</span> $</p>
                                 </div>
                             }
-
                         </CardText>
                         <CardActions>
                             {currentDataItem &&
-                                <FlatButton label={'Подробнее'}/>
+                                <Link to={`/detail/${currentCityId}`}>Подробнее</Link>
                             }
                         </CardActions>
                     </Card>

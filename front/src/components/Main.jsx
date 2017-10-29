@@ -6,6 +6,7 @@ import { css } from 'emotion'
 import AppBar from 'material-ui/AppBar';
 
 import Map from './map/Map'
+import Detail from './detail/Detail'
 
 
 const container = css`
@@ -18,6 +19,7 @@ const Main = () => (
         <div className={container}>
             <Switch>
                 <Route exact path='/' component={Map} />
+                <Route path='/detail/:id' component={Detail} />
             </Switch>
         </div>
     </main>

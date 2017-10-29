@@ -4,10 +4,12 @@
   "private": true,
   "dependencies": {
     "axios": "^0.17.0",
+    "chart.js": "^2.7.1",
     "emotion": "^8.0.9",
     "google-map-react": "^0.25.0",
     "material-ui": "^0.19.4",
     "react": "^16.0.0",
+    "react-chartjs-2": "^2.6.4",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.14"
