@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const mysql = Promise.promisifyAll(require('mysql'));
+const capitalize = require("capitalize");
 
 const Data = function(config) {
     this.config = config;
@@ -58,12 +59,12 @@ Data.prototype.getRegionalData = function(region) {
             return {
                 total: row['sum(STOIM)'],
                 tnved: row['TNVED'],
-                name: row['max(SIMPLE_NAM)'],
+                name: capitalize(row['max(SIMPLE_NAM)'].toLowerCase()),
                 year: row['PERIOD'],
                 export: row['NAPR'] == 'ЭК',
                 quantity: row['sum(KOL)'],
                 unit: row['max(EDIZM)'],
-                country: row['max(NAME)']
+                country: capitalize(row['max(NAME)'].toLowerCase())
             }
         });
     });
