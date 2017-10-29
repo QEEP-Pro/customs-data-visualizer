@@ -25,8 +25,8 @@ const GoogleMapWrapper = (props) => (
                             lng={dataItem.city.lon}
                             radius={dataItem[props.metric].radius}
                             amount={dataItem[props.metric].amount}
-                            cityId={dataItem.city.id}
-                            active={props.currentDataItem && dataItem.city.id === props.currentCityId}
+                            cityId={dataItem.city.uid}
+                            active={props.currentDataItem && dataItem.city.uid === props.currentCityId}
                             color={getMetricColor(props.metric)}
                         />
                     )}

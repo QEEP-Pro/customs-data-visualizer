@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import { css } from 'emotion'
 
 
-import {fetchRange} from '../../utils/api'
+import {fetchRange, fetchDataList} from '../../utils/api'
 
 import CityShortInfo from './CityShortInfo'
 import YearPicker from './YearPicker'
@@ -27,6 +27,9 @@ export default class Map extends Component {
     }
 
     componentWillMount() {
+        const year = this.state.currentYear;
+        const oldDataItems = this.state.dataItems;
+
         fetchRange().then(data => this.setState({
             range: {
                 start: parseInt(data.min, 10),
@@ -34,67 +37,28 @@ export default class Map extends Component {
             },
         }));
 
-        this.setState({
-            dataItems: [
-                {
-                    year: 2017,
-                    city: {
-                        id: 1,
-                        name: 'Tomks',
-                        lon: 84.948179,
-                        lat: 56.48466
-                    },
-                    import: {
-                        radius: 20,
-                        amount: 123432234534,
-                    },
-                    export: {
-                        radius: 50,
-                        amount: 432454353423,
-                    },
-                },
-                {   year: 2016,
-                    city: {
-                        id: 5,
-                        name: 'City N',
-                        lon: 86.084787,
-                        lat: 67.23976
-                    },
-                    import: {
-                        radius: 5,
-                        amount: 12343223,
-                    },
-                    export: {
-                        radius: 23,
-                        amount: 432423,
-                    },
-                },
-                {   year: 2017,
-                    city: {
-                        id: 5,
-                        name: 'City N',
-                        lon: 86.084787,
-                        lat: 67.23976
-                    },
-                    import: {
-                        radius: 10,
-                        amount: 4002,
-                    },
-                    export: {
-                        radius: 19,
-                        amount: 432423,
-                    },
-                }
-            ]
-        });
+        fetchDataList(year).then(data => this.setState({
+            dataItems: oldDataItems.concat(
+                data.map((item => ({
+                    ...item,
+                    year,
+                })))
+            )
+        }));
     }
 
     render() {
         const {dataItems, currentCityId, currentYear, currentMetric} = this.state;
 
+        if (dataItems.length === 0) {
+            return false;
+        }
+
+        console.log(dataItems);
+
         const currentDataItem = dataItems
             .filter(item => item.year === currentYear)
-            .find(dataItem => dataItem.city.id === currentCityId);
+            .find(dataItem => dataItem.city.uid === currentCityId);
 
         return (
             <div className={flexRow}>
@@ -103,8 +67,7 @@ export default class Map extends Component {
                         metric={currentMetric}
                         data={dataItems.filter(item => item.year === currentYear)}
                         currentDataItem={currentDataItem}
-
-                        handleChildClick={(_, child) => this.setState({currentCityId: child.cityId})}
+                        handleChildClick={ (_, child) => this.setState({currentCityId: child.cityId}) }
                     />
                 </div>
                 <div className={asideColumn}>
