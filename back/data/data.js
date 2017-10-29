@@ -58,7 +58,7 @@ Data.prototype.getRegionalData = function(region) {
             return {
                 total: row['sum(STOIM)'],
                 tnved: row['TNVED'],
-                name: row['SIMPLE_NAM'],
+                name: row['max(SIMPLE_NAM)'],
                 year: row['PERIOD'],
                 export: row['NAPR'] == 'ЭК',
                 quantity: row['sum(KOL)'],
