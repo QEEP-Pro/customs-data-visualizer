@@ -24,7 +24,7 @@ const CityShortInfo = (props) => (
         </CardText>
         <CardActions>
             {props.dataItem &&
-            <Link to={`/detail/${props.dataItem.city.id}`}>Подробнее</Link>
+            <Link to={`/detail/${props.dataItem.city.uid}`}>Подробнее</Link>
             }
         </CardActions>
     </Card>
