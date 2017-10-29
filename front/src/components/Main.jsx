@@ -13,14 +13,13 @@ const container = css`
     padding: 3rem;
 `;
 
-const Main = ({router}) => (
+const Main = () => (
     <main>
-        {console.log(router)}
         <AppBar title="QEEP-Pro OpenData" showMenuIconButton={false} />
         <div className={container}>
             <Switch>
                 <Route exact path='/' component={Map} />
-                <Route path='/detail/:id' component={Detail} />
+                <Route path='/detail/:id/:name' component={Detail} />
             </Switch>
         </div>
     </main>

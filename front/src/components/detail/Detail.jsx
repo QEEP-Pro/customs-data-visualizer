@@ -7,7 +7,7 @@ import {List, ListItem} from 'material-ui/List'
 
 import {Line} from 'react-chartjs-2'
 
-import {fetchRange, fetchDataList} from '../../utils/api'
+import {fetchDataItem} from '../../utils/api'
 
 
 export default class Detail extends Component {
@@ -16,41 +16,56 @@ export default class Detail extends Component {
         super();
 
         this.state = {
-            testDataSet: [
-                {
-                    year: 1999,
-                    import: 1333333,
-                    export: 1233331,
-                },
-                {
-                    year: 2000,
-                    import: 1232143,
-                    export: 444444,
-                },
-                {
-                    year: 2001,
-                    import: 4324324,
-                    export: 11111,
-                }
-            ]
+            fetched: false,
+            activeCategory: null,
+            data: [],
         }
     }
 
+    componentWillMount() {
+        fetchDataItem(this.props.match.params.id).then(data =>
+            this.setState({
+                fetched: true,
+                data,
+            })
+        );
+    }
+
     render() {
+        const cityName = this.props.match.params.name;
+
+        const categories = this.state.fetched ? (
+            <div>
+                {this.state.data.menu.map((category, index) =>
+                    <ListItem
+                        key={index}
+                        primaryText={category.name}
+                        onClick={() => this.setState({activeCategory: category})}
+                    />
+                )}
+            </div>
+        ) : false;
+
+        const lineChart = this.state.fetched ? (
+            !this.state.activeCategory
+                ? <LineChart data={this.state.data.totals} />
+                : <LineChart data={this.state.data.data[this.state.activeCategory.uid]} />
+        ) : false;
+
+        console.log(this.state.fetched ? this.state.data.data : null)
+
         return (
             <div className={flexRow}>
                 <Card className={menuColumn}>
-                    <CardTitle title={'TOmsk'} subtitle={'Товары'} />
+                    <CardTitle title={cityName} subtitle={'Товары'} />
                     <List>
-                        <ListItem primaryText="All mail" />
-                        <ListItem primaryText="Trash" />
-                        <ListItem primaryText="Spam" />
-                        <ListItem primaryText="Follow up" />
+                        {categories}
                     </List>
                 </Card>
                 <Card className={mainColumn}>
+                    {this.state.activeCategory && <CardTitle title={this.state.activeCategory.name}/>}
                     <CardMedia>
-                        <LineChart data={this.state.testDataSet} />
+                        {lineChart}
                     </CardMedia>
                 </Card>
             </div>
@@ -78,17 +93,31 @@ const LineChart = (props) => (
             datasets: [
                 {
                     label: 'Импорт',
-                    data: props.data.map(item => ({x: item.year, y: item.import})),
+                    data: getImportData(props.data),
                 },
                 {
                     label: 'Экспорт',
-                    data: props.data.map(item => ({x: item.year, y: item.export})),
+                    data: getExportData(props.data),
                 }
             ]
         }}
         options={getLineChartOptions()}
     />
 );
+
+const getImportData = (data) => {
+    return Object.keys(data).filter(item => !isNaN(parseInt(item)) ).map( (key, index) => ({
+        x: key,
+        y: data[key].import.amount,
+    }));
+};
+
+const getExportData = (data) => {
+    return Object.keys(data).filter(item => !isNaN(parseInt(item)) ).map( (key, index) => ({
+        x: key,
+        y: data[key].export.amount,
+    }));
+};
 
 const getLineChartOptions = () => ({
     layout: { padding: {left: 20, right: 20, top: 20, bottom: 20} },
