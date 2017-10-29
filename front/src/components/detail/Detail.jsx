@@ -7,6 +7,8 @@ import {List, ListItem} from 'material-ui/List'
 
 import {Line} from 'react-chartjs-2'
 
+import {fetchRange, fetchDataList} from '../../utils/api'
+
 
 export default class Detail extends Component {
 

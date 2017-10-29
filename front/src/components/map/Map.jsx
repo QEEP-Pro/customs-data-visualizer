@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 
 import { css } from 'emotion'
 
-
 import {fetchRange, fetchDataList} from '../../utils/api'
 
 import CityShortInfo from './CityShortInfo'
