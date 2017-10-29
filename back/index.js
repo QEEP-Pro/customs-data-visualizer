@@ -5,11 +5,9 @@ const Data = require('./data/data.js');
 const Api = require('./api/api.js');
 
 const data = new Data({
-    host     : 'localhost',
-    port     : '3306',
-    user     : 'admin',
-    password : 'admin',
-    database : 'opendata'
+    socketPath: '/var/run/mysqld/mysqld.sock',
+    user     : 'root',
+    database : 'openhack'
 });
 
 const geocoder = new MultiGeocoder({ provider: 'yandex-cache', coordorder: 'latlong' });
@@ -21,7 +19,7 @@ const api = new Api({
 
 const app = express();
 
-const port = 3001;
+const port = 3000;
 
 const getCurrentYear = function() {
     return new Date().getFullYear();
@@ -42,7 +40,9 @@ app.get('/range', function (req, res) {
 });
 
 app.get('/data', function(req, res) {
-    api.getYearlyData(req.query.year || getCurrentYear()).then(function(results) {
+    var regional = req.query.regional === undefined ? true : (req.query.regional === 'true');
+
+    api.getYearlyData(req.query.year || getCurrentYear(), regional).then(function(results) {
         res.json(results);
     });
 });
