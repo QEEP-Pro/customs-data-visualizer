@@ -41,6 +41,7 @@ export default class Map extends Component {
         this.setState({
             dataItems: [
                 {
+                    year: 2017,
                     city: {
                         id: 1,
                         name: 'Tomks',
@@ -56,7 +57,7 @@ export default class Map extends Component {
                         amount: 432454353423,
                     },
                 },
-                {
+                {   year: 2016,
                     city: {
                         id: 5,
                         name: 'City N',
@@ -64,11 +65,27 @@ export default class Map extends Component {
                         lat: 67.23976
                     },
                     import: {
-                        radius: 2,
+                        radius: 5,
                         amount: 12343223,
                     },
                     export: {
                         radius: 23,
+                        amount: 432423,
+                    },
+                },
+                {   year: 2017,
+                    city: {
+                        id: 5,
+                        name: 'City N',
+                        lon: 86.084787,
+                        lat: 67.23976
+                    },
+                    import: {
+                        radius: 10,
+                        amount: 4002,
+                    },
+                    export: {
+                        radius: 19,
                         amount: 432423,
                     },
                 }
@@ -79,7 +96,9 @@ export default class Map extends Component {
     render() {
         const {dataItems, currentCityId, currentYear, currentMetric} = this.state;
 
-        const currentDataItem = dataItems.find(dataItem => dataItem.city.id === currentCityId);
+        const currentDataItem = dataItems
+            .filter(item => item.year === currentYear)
+            .find(dataItem => dataItem.city.id === currentCityId);
 
         return (
             <div className={flexRow}>
@@ -91,7 +110,7 @@ export default class Map extends Component {
                                 zoom={1}
                                 onChildClick={(_, child) => this.setState({currentCityId: child.cityId})}
                             >
-                                {dataItems && dataItems.map((dataItem, index) =>
+                                {dataItems.filter(item => item.year === currentYear).map((dataItem, index) =>
                                     <DataPoint
                                         key={index}
                                         lat={dataItem.city.lat}
@@ -140,7 +159,7 @@ export default class Map extends Component {
                     <Card>
                         <CardTitle
                             title={currentDataItem ? currentDataItem.city.name : 'Выберите регион'}
-                            subtitle={'Данные'}
+                            subtitle={currentDataItem ? `Данные за ${currentYear} год` : null}
                         />
                         <CardText>
                             {currentDataItem &&
