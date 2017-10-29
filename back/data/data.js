@@ -49,20 +49,21 @@ Data.prototype.getYearlyData = function(year, regional) {
 
 Data.prototype.getRegionalData = function(region) {
     var sql =
-        "SELECT sum(STOIM), sum(KOL), max(EDIZM), NAPR, TNVED, PERIOD, max(SIMPLE_NAM) FROM TCBT " +
-        "JOIN THBED on TNVED = KOD " +
-        "WHERE REGION LIKE ? GROUP BY TNVED, NAPR, PERIOD";
+        "SELECT sum(STOIM), sum(KOL), max(EDIZM), NAPR, TNVED, PERIOD, max(SIMPLE_NAM), max(NAME) FROM TCBT " +
+        "JOIN THBED ON TNVED = KOD JOIN CTPAHA ON CTPAHA.KOD = STRANA " +
+        "WHERE REGION LIKE ? GROUP BY TNVED, NAPR, PERIOD, STRANA";
 
     return this.query(sql, [region + '%']).then(function(results) {
         return results.map(function(row) {
             return {
                 total: row['sum(STOIM)'],
                 tnved: row['TNVED'],
-                name: row['max(SIMPLE_NAM)'],
+                name: row['SIMPLE_NAM'],
                 year: row['PERIOD'],
                 export: row['NAPR'] == 'ЭК',
                 quantity: row['sum(KOL)'],
-                unit: row['max(EDIZM)']
+                unit: row['max(EDIZM)'],
+                country: row['max(NAME)']
             }
         });
     });
