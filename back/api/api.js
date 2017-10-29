@@ -16,70 +16,117 @@ const regionsTable = {
     "95":"Абакан","96":"Грозный","97":"Чебоксары","98":"Якутск","99":"Биробиджан","35":"Симферополь","67":"Севастополь"
 };
 
-const maxRadius = 500;
-const minRadius = 50;
+const maxRadius = 20;
+const minRadius = 5;
 
-var geocoderCache = {};
+var geocoderCache = {
+    "Магадан":[59.568164,150.808541],"Псков":[57.819365,28.331786],"Пенза":[53.195063,45.018316],
+    "Курск":[51.730361,36.192647],"Ростов-на-Дону":[47.222555,39.718678],"Липецк":[52.608782,39.599346],
+    "Иркутск":[52.286387,104.28066],"Саранск":[54.187211,45.183642],"Волгоград":[48.707103,44.516939],
+    "Омск":[54.989342,73.368212],"Новосибирск":[55.030199,82.92043],"Кемерово":[55.354968,86.087314],
+    "Элиста":[46.308309,44.270181],"Ярославль":[57.626569,39.893787],"Томск":[56.48466,84.948179],
+    "Абакан":[53.721152,91.442387],"Южно-Сахалинск":[46.959179,142.738041],"Белгород":[50.59566,36.587223],
+    "Челябинск":[55.160026,61.40259],"Брянск":[53.243325,34.363731],"Улан-Удэ":[51.834464,107.584574],
+    "Нижний Новгород":[56.326887,44.005986],"Тамбов":[52.721219,41.452274],"Санкт-Петербург":[59.939095,30.315868],
+    "Нальчик":[43.485278,43.607072],"Петрозаводск":[61.789036,34.359688],"Астрахань":[46.347869,48.033574],
+    "Киров":[58.603581,49.667978],"Тверь":[56.859611,35.911896],"Сыктывкар":[61.668724,50.83577],
+    "Горно-Алтайск":[51.958182,85.960373],"Петропавловск-Камчатский":[53.03704,158.655918],
+    "Магас":[43.166669,44.80484],"Иваново":[57.000348,40.973921],"Курган":[55.441606,65.344316],
+    "Саратов":[51.533103,46.034158],"Калуга":[54.513845,36.261215],"Биробиджан":[48.794662,132.921736],
+    "Анадырь":[64.734816,177.514745],"Майкоп":[44.609764,40.100516],"Кострома":[57.767961,40.926858],
+    "Владивосток":[43.115141,131.885341],"Грозный":[43.317776,45.694909],"Барнаул":[53.348053,83.779875],
+    "Ульяновск":[54.316855,48.402557],"Севастополь":[44.616687,33.525432],"Владикавказ":[43.020603,44.681888],
+    "Ставрополь":[45.044521,41.969083],"Казань":[55.798551,49.106324],"Чита":[52.033973,113.499432],
+    "Махачкала":[42.98306,47.504682],"Воронеж":[51.661535,39.200287],"Самара":[53.195538,50.101783],
+    "Москва":[55.753215,37.622504],"Рязань":[54.629148,39.734928],"Владимир":[56.129042,40.40703],
+    "Благовещенск":[50.290658,127.527173],"Калининград":[54.70739,20.507307],"Чебоксары":[56.146247,47.250153],
+    "Пермь":[58.010374,56.229398],"Оренбург":[51.768199,55.096955],"Салехард":[66.530715,66.613851],
+    "Йошкар-Ола":[56.634407,47.899878],"Кызыл":[51.719086,94.437757],"Смоленск":[54.78264,32.045134],
+    "Орёл":[52.970143,36.063397],"Краснодар":[45.035566,38.974711],"Мурманск":[68.969582,33.074558],
+    "Великий Новгород":[58.52281,31.269915],"Якутск":[62.028103,129.732663],"Ижевск":[56.852593,53.204843],
+    "Нарьян-Мар":[67.63805,53.006926],"Екатеринбург":[56.838607,60.605514],"Уфа":[54.735147,55.958727],
+    "Хабаровск":[48.480223,135.071917],"Черкесск":[44.226863,42.04677],"Симферополь":[44.948314,34.100156],
+    "Тула":[54.193033,37.617752],"Красноярск":[56.010563,92.852572],"Вологда":[59.220473,39.891559]
+};
 
 const Api = function(config) {
     this.data = config.data;
     this.geocoder = config.geocoder;
 };
 
-Api.prototype.getImports = function(year) {
-    return this.getYearlyData(year, 'ИМ');
-};
-
-Api.prototype.getExports = function(year) {
-    return this.getYearlyData(year, 'ЭК');
-};
-
-Api.prototype.getYearlyData = function(year, direction) {
+Api.prototype.getYearlyData = function(year) {
 
     const self = this;
 
-    return this.data.getYearlyData(year, direction).then(function(results) {
+    return this.data.getYearlyData(year).then(function(results) {
+
         const totals = results.map(function(row) { return row.total });
 
         const max = Math.max.apply(null, totals);
         const min = Math.min.apply(null, totals);
 
-        return Promise.map(results, function(row) {
+        var obj = {};
+
+        results.forEach(function(row) {
 
             var okato = row.region.substr(0, 2);
             var city = regionsTable[okato];
 
             if (city) {
                 if (geocoderCache[city]) {
-                    return {
-                        city: {
-                            uid: okato,
-                            name: city,
-                            lat: geocoderCache[city][0],
-                            lon: geocoderCache[city][1]
-                        },
+
+                    const amountData = {
                         radius: self.getRadius(row.total, max, min),
                         amount: row.total
+                    };
+
+                    const cityData = {
+                        uid: okato,
+                        name: city,
+                        lat: geocoderCache[city][0],
+                        lon: geocoderCache[city][1]
+                    };
+
+                    if (row.export) {
+                        var fullData = Object.assign(cityData, {
+                            export: amountData
+                        })
+                    } else {
+                        var fullData = Object.assign(cityData, {
+                            import: amountData
+                        })
                     }
+
+                    obj[okato] = obj[okato] || fullData;
+
+                    obj[okato] = Object.assign(fullData, obj[okato]);
+
                 } else {
-                    return self.geocoder.geocode([city]).then(function(geocodeResult) {
-                        geocoderCache[city] = geocodeResult.result.features[0].geometry.coordinates;
-                        return {
-                            city: {
-                                uid: okato,
-                                name: city,
-                                lat: geocoderCache[city][0],
-                                lon: geocoderCache[city][1]
-                            },
-                            radius: self.getRadius(row.total, max, min),
-                            amount: row.total
-                        }
-                    })
+                    console.log('geocode is not cached: ' + city);
+                    return acc;
                 }
             } else {
                 console.log('unknown OKATO: ' + okato);
+                return acc;
             }
-         });
+        });
+        
+        var arr = [];
+
+        for (k in obj) {
+            arr.push({
+                city: {
+                    uid: obj[k].uid,
+                    name: obj[k].name,
+                    lat: obj[k].lat,
+                    lon: obj[k].lon
+                },
+                import: obj[k].import,
+                export: obj[k].export
+            })
+        }
+
+        return arr;
     });
 
 };

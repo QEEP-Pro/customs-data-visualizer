@@ -37,14 +37,8 @@ app.get('/range', function (req, res) {
     });
 });
 
-app.get('/import', function(req, res) {
-    api.getImports(req.query.year || getCurrentYear()).then(function(results) {
-        res.json(results);
-    });
-});
-
-app.get('/export', function(req, res) {
-    api.getExports(req.query.year || getCurrentYear()).then(function(results) {
+app.get('/data', function(req, res) {
+    api.getYearlyData(req.query.year || getCurrentYear()).then(function(results) {
         res.json(results);
     });
 });
