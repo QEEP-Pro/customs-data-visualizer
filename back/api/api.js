@@ -189,53 +189,29 @@ Api.prototype.getCategories = function(region) {
 Api.prototype.getRegionalData = function(region, industryId) {
     return this.data.getRegionalData(region, industryId).then(function(results) {
 
+        const dataObj = {
+            import: 0,
+            export: 0
+        };
+
         var data = {};
 
         results.forEach(function(row) {
 
-            const dataObj = {
-                import: {
-                    amount: 0,
-                    quantity: 0
-                },
-                export: {
-                    amount: 0,
-                    quantity: 0
-                }
-            };
-
-            const toplevel = row.tnved.slice(0,2);
-
-            data[toplevel] = data[toplevel] || Object.assign({}, dataObj);
-
-            data[toplevel][row.year] = data[toplevel][row.year] || Object.assign({
+            data[row.year] = data[row.year] || Object.assign({
                 unit: row.unit,
                 countries: {}
             }, dataObj);
 
-            data[toplevel][row.year].countries[row.country] = data[toplevel][row.year].countries[row.country] || Object.assign({}, dataObj);
+            data[row.year].countries[row.country] = data[row.year].countries[row.country] || Object.assign({}, dataObj);
 
             if (row.export) {
-                data[toplevel].export.amount += row.total;
-                data[toplevel].export.quantity += row.quantity;
-                data[toplevel][row.year].export.amount += row.total;
-                data[toplevel][row.year].export.quantity += row.quantity;
-                data[toplevel][row.year].countries[row.country].export.amount += row.total;
-                data[toplevel][row.year].countries[row.country].export.quantity += row.quantity;
+                data[row.year].export += row.total;
+                data[row.year].countries[row.country].export += row.total;
             } else {
-                data[toplevel].import.amount += row.total;
-                data[toplevel].import.quantity += row.quantity;
-                data[toplevel][row.year].import.amount += row.total;
-                data[toplevel][row.year].import.quantity += row.quantity;
-                data[toplevel][row.year].countries[row.country].import.amount += row.total;
-                data[toplevel][row.year].countries[row.country].import.quantity += row.quantity;
+                data[row.year].import += row.total;
+                data[row.year].countries[row.country].import += row.total;
             }
-
-            if (/^\d{2}0*$/.test(row.tnved)) {
-                data[toplevel].name = row.name;
-            }
-
-            data = data[toplevel];
         });
 
         return data;
