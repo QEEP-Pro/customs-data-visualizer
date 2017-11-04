@@ -199,7 +199,6 @@ Api.prototype.getRegionalData = function(region, industryId) {
         results.forEach(function(row) {
 
             data[row.year] = data[row.year] || Object.assign({
-                unit: row.unit,
                 countries: {}
             }, dataObj);
 
