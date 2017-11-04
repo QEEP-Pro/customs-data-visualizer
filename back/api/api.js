@@ -234,6 +234,8 @@ Api.prototype.getRegionalData = function(region, industryId) {
             if (/^\d{2}0*$/.test(row.tnved)) {
                 data[toplevel].name = row.name;
             }
+
+            data = data[toplevel];
         });
 
         return data;

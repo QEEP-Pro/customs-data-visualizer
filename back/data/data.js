@@ -64,7 +64,7 @@ Data.prototype.getRegionalData = function(region, industryId) {
                 export: row['NAPR'] == 'ЭК',
                 quantity: row['sum(KOL)'],
                 unit: row['max(EDIZM)'],
-                country: capitalize.words(row['max(NAME)'].toLowerCase())
+                country: capitalize(row['max(NAME)'].toLowerCase())
             }
         });
     });
@@ -82,7 +82,7 @@ Data.prototype.getRegionTotals = function(region) {
                 total: row['sum(STOIM)'],
                 year: row['PERIOD'],
                 export: row['NAPR'] == 'ЭК',
-                country: capitalize.words(row['max(NAME)'].toLowerCase())
+                country: capitalize(row['max(NAME)'].toLowerCase())
             }
         });
     });
