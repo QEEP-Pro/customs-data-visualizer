@@ -6,6 +6,7 @@ import DetailDataItem from '../model/DetailDataItem'
 
 import { fetchTotals } from '../utils/api/detail'
 
+
 interface Props {
     cityId: number
 }

@@ -75,7 +75,8 @@ export default class Detail extends React.Component<Props, LocalState> {
                                     <ListItem
                                         key={i}
                                         primaryText={category.name}
-                                        containerElement={<Link to={`${match.url}/${category.uid}-${category.name}`} />}
+                                        // tslint:disable-next-line:max-line-length
+                                        containerElement={<Link to={`${match.url}/${match.params.cityId}-${category.uid}-${category.name}`} />}
                                     />
                             )}
                         </List>
@@ -83,8 +84,15 @@ export default class Detail extends React.Component<Props, LocalState> {
                 </div>
                 
                 <div className={mainStyle}>
-                    <Route exact path={`${match.url}`} render={() => <Totals cityId={match.params.cityId} />} />
-                    <Route path={`${match.url}/:industryId-:industryName`} component={Industry} />
+                    <Route
+                        exact
+                        path={`${match.url}`}
+                        render={() => <Totals cityId={match.params.cityId} />}
+                    />
+                    <Route
+                        path={`${match.url}/:cityId-:industryId-:industryName`}
+                        component={Industry}
+                    />
                 </div>
             </div>
         )
