@@ -17,7 +17,7 @@ const regionsTable = {
 };
 
 const maxRadius = 20;
-const minRadius = 5;
+const minRadius = 4;
 
 var geocoderCache = {
     "Магадан":[59.568164,150.808541],"Псков":[57.819365,28.331786],"Пенза":[53.195063,45.018316],
@@ -129,14 +129,67 @@ Api.prototype.getYearlyData = function(year, regional) {
 
 };
 
-Api.prototype.getRegionalData = function(region) {
-    const self = this;
+Api.prototype.getTotals = function(region) {
+    return this.data.getRegionTotals(region).then(function(results) {
+        var totals = {};
 
-    return this.data.getRegionalData(region).then(function(results) {
+        results.forEach(function(row) {
+
+            const dataObj = {
+                import: 0,
+                export: 0
+            };
+
+            totals[row.year] = totals[row.year] || Object.assign({
+                    countries: {}
+            }, dataObj);
+
+            totals[row.year].countries[row.country] = totals[row.year].countries[row.country] || Object.assign({}, dataObj);
+
+            if (row.export) {
+                totals[row.year].export += row.total;
+                totals[row.year].countries[row.country].export += row.total;
+            } else {
+                totals[row.year].import += row.total;
+                totals[row.year].countries[row.country].import += row.total;
+            }
+        });
+
+        return totals;
+    });
+};
+
+Api.prototype.getCategories = function(region) {
+    return this.data.getCategories(region).then(function(results) {
+        var menu = {};
+
+        results.forEach(function(row) {
+
+            const toplevel = row.tnved.slice(0,2);
+
+            menu[toplevel] = menu[toplevel] || {};
+
+            if (/^\d{2}0*$/.test(row.tnved)) {
+                menu[toplevel].name = row.name;
+            }
+        });
+
+        var menuArr = [];
+
+        for (k in menu) {
+            menuArr.push(Object.assign({ uid: k }, menu[k]));
+        }
+
+        return menuArr.sort(function(x) {
+            return x.name;
+        });
+    });
+};
+
+Api.prototype.getRegionalData = function(region, industryId) {
+    return this.data.getRegionalData(region, industryId).then(function(results) {
 
         var data = {};
-        var menu = {};
-        var totals = {};
 
         results.forEach(function(row) {
 
@@ -155,19 +208,12 @@ Api.prototype.getRegionalData = function(region) {
 
             data[toplevel] = data[toplevel] || Object.assign({}, dataObj);
 
-            totals[row.year] = totals[row.year] || Object.assign({
-                countries: {}
-            }, dataObj);
-
             data[toplevel][row.year] = data[toplevel][row.year] || Object.assign({
                 unit: row.unit,
                 countries: {}
             }, dataObj);
 
             data[toplevel][row.year].countries[row.country] = data[toplevel][row.year].countries[row.country] || Object.assign({}, dataObj);
-            totals[row.year].countries[row.country] = totals[row.year].countries[row.country] || Object.assign({}, dataObj);
-
-            menu[toplevel] = menu[toplevel] || {};
 
             if (row.export) {
                 data[toplevel].export.amount += row.total;
@@ -176,10 +222,6 @@ Api.prototype.getRegionalData = function(region) {
                 data[toplevel][row.year].export.quantity += row.quantity;
                 data[toplevel][row.year].countries[row.country].export.amount += row.total;
                 data[toplevel][row.year].countries[row.country].export.quantity += row.quantity;
-                totals[row.year].export.amount += row.total;
-                totals[row.year].export.quantity += row.quantity;
-                totals[row.year].countries[row.country].export.amount += row.total;
-                totals[row.year].countries[row.country].export.quantity += row.quantity;
             } else {
                 data[toplevel].import.amount += row.total;
                 data[toplevel].import.quantity += row.quantity;
@@ -187,29 +229,14 @@ Api.prototype.getRegionalData = function(region) {
                 data[toplevel][row.year].import.quantity += row.quantity;
                 data[toplevel][row.year].countries[row.country].import.amount += row.total;
                 data[toplevel][row.year].countries[row.country].import.quantity += row.quantity;
-                totals[row.year].import.amount += row.total;
-                totals[row.year].import.quantity += row.quantity;
-                totals[row.year].countries[row.country].import.amount += row.total;
-                totals[row.year].countries[row.country].import.quantity += row.quantity;
             }
 
             if (/^\d{2}0*$/.test(row.tnved)) {
                 data[toplevel].name = row.name;
-                menu[toplevel].name = row.name;
             }
         });
 
-        var menuArr = [];
-
-        for (k in menu) {
-            menuArr.push(Object.assign({ uid: k }, menu[k]));
-        }
-
-        return {
-            data: data,
-            menu: menuArr,
-            totals: totals
-        };
+        return data;
     });
 };
 

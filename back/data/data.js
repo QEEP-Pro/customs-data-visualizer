@@ -48,13 +48,13 @@ Data.prototype.getYearlyData = function(year, regional) {
     });
 };
 
-Data.prototype.getRegionalData = function(region) {
+Data.prototype.getRegionalData = function(region, industryId) {
     var sql =
         "SELECT sum(STOIM), sum(KOL), max(EDIZM), NAPR, TNVED, PERIOD, max(SIMPLE_NAM), max(NAME) FROM TCBT " +
         "JOIN THBED ON TNVED = KOD JOIN CTPAHA ON CTPAHA.KOD = STRANA " +
-        "WHERE REGION LIKE ? GROUP BY TNVED, NAPR, PERIOD, STRANA";
+        "WHERE REGION LIKE ? AND TNVED = ? GROUP BY TNVED, NAPR, PERIOD, STRANA";
 
-    return this.query(sql, [region + '%']).then(function(results) {
+    return this.query(sql, [region + '%', industryId]).then(function(results) {
         return results.map(function(row) {
             return {
                 total: row['sum(STOIM)'],
@@ -64,7 +64,41 @@ Data.prototype.getRegionalData = function(region) {
                 export: row['NAPR'] == 'ЭК',
                 quantity: row['sum(KOL)'],
                 unit: row['max(EDIZM)'],
-                country: capitalize(row['max(NAME)'].toLowerCase())
+                country: capitalize.words(row['max(NAME)'].toLowerCase())
+            }
+        });
+    });
+};
+
+Data.prototype.getRegionTotals = function(region) {
+    var sql =
+        "SELECT sum(STOIM), NAPR, PERIOD, max(NAME) FROM TCBT " +
+        "JOIN CTPAHA ON CTPAHA.KOD = STRANA " +
+        "WHERE REGION LIKE ? GROUP BY NAPR, PERIOD, STRANA";
+
+    return this.query(sql, [region + '%']).then(function(results) {
+        return results.map(function(row) {
+            return {
+                total: row['sum(STOIM)'],
+                year: row['PERIOD'],
+                export: row['NAPR'] == 'ЭК',
+                country: capitalize.words(row['max(NAME)'].toLowerCase())
+            }
+        });
+    });
+};
+
+Data.prototype.getCategories = function(region) {
+    var sql =
+        "SELECT TNVED, max(SIMPLE_NAM) FROM TCBT " +
+        "JOIN THBED ON TNVED = KOD " +
+        "WHERE REGION LIKE ? GROUP BY TNVED";
+
+    return this.query(sql, [region + '%']).then(function(results) {
+        return results.map(function(row) {
+            return {
+                tnved: row['TNVED'],
+                name: capitalize(row['max(SIMPLE_NAM)'].toLowerCase())
             }
         });
     });

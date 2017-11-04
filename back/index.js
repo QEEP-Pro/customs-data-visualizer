@@ -9,7 +9,7 @@ const data = new Data({
     port     : '3306',
     user     : 'admin',
     password : 'admin',
-    database : 'opendata',
+    database : 'opendata'
 });
 
 const geocoder = new MultiGeocoder({ provider: 'yandex-cache', coordorder: 'latlong' });
@@ -41,16 +41,28 @@ app.get('/range', function (req, res) {
     });
 });
 
-app.get('/data', function(req, res) {
-    var regional = req.query.regional === undefined ? true : (req.query.regional === 'true');
+app.get('/regionTotals', function(req, res) {
+    api.getTotals(req.query.uid).then(function(results) {
+        res.json(results)
+    });
+});
 
-    api.getYearlyData(req.query.year || getCurrentYear(), regional).then(function(results) {
+app.get('/regionCategories', function(req, res) {
+    api.getCategories(req.query.uid).then(function(results) {
         res.json(results);
     });
 });
 
-app.get('/region', function(req, res) {
-    api.getRegionalData(req.query.uid).then(function(results) {
+app.get('/regionData', function(req, res) {
+    api.getRegionalData(req.query.uid, req.query.industryId).then(function(results) {
+        res.json(results);
+    });
+});
+
+app.get('/data', function(req, res) {
+    var regional = req.query.regional === undefined ? true : (req.query.regional === 'true');
+
+    api.getYearlyData(req.query.year || getCurrentYear(), regional).then(function(results) {
         res.json(results);
     });
 });
