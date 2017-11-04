@@ -22,6 +22,7 @@ interface Props {
 export default (props: Props) => (
     <div className={container}>
         <GoogleMap
+            bootstrapURLKeys={{key: 'AIzaSyBujuD_AcnBbtT_dCNkkwNTg_vLzO7hqPI'}}
             center={{lat: 67.239763, lng: 86.084787} as Coords}
             zoom={1}
             onChildClick={props.handleChildClick}
