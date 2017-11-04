@@ -25,6 +25,10 @@ export default class Totals extends React.Component<Props, LocalState> {
         state = {
             data: [],
         } as LocalState
+
+        componentWillMount() {
+            this.componentWillReceiveProps(this.props)
+        }
     
         componentWillReceiveProps(nextProps: Props) {
             const { cityId, industryId } = nextProps.match.params
