@@ -26,6 +26,12 @@ interface Props {
 export default (props: Props) => (
     <Card>
         <CardText>
+            <div className={rowStyle}>
+                <p>{props.range.start}</p>
+                <p className={css`font-size: 2rem;`}>{props.year}</p>
+                <p>{props.range.end}</p>
+            </div>
+
             <Slider
                 min={props.range.start}
                 max={props.range.end}
@@ -35,6 +41,7 @@ export default (props: Props) => (
             />
 
             <RadioButtonGroup
+                className={css`width: 100%; height: 24px; padding-bottom: 15px;`}
                 name={'metrics'}
                 defaultSelected={props.metric}
                 onChange={(_: any, value: Metric) => props.handleChangeMetric(value)}
@@ -55,4 +62,11 @@ export default (props: Props) => (
 const metricStyle = css`
     width: 50% !important;
     float: left;
+`
+
+const rowStyle = css`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
 `
