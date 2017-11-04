@@ -3,20 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/randomcolor": "^0.4.3",
     "axios": "^0.17.0",
     "chart.js": "^2.7.1",
+    "color": "^2.0.0",
     "emotion": "^8.0.9",
+    "emotions": "^0.0.1",
     "google-map-react": "^0.25.0",
-    "lodash": "^4.17.4",
     "material-ui": "^0.19.4",
+    "randomcolor": "^0.5.3",
     "react": "^16.0.0",
     "react-chartjs-2": "^2.6.4",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.14"
+    "react-scripts-ts": "2.8.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build"
+  },
+  "devDependencies": {
+    "@types/chart.js": "^2.6.11",
+    "@types/color": "^2.0.0",
+    "@types/google-map-react": "^0.23.0",
+    "@types/jest": "^21.1.5",
+    "@types/material-ui": "^0.18.3",
+    "@types/node": "^8.0.47",
+    "@types/react": "^16.0.19",
+    "@types/react-dom": "^16.0.2",
+    "@types/react-router-dom": "^4.2.0"
   }
 }
