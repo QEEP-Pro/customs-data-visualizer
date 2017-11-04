@@ -31,8 +31,7 @@ Data.prototype.getYearlyData = function(year, regional) {
     var sql = "SELECT REGION, sum(STOIM), NAPR FROM TCBT WHERE PERIOD = ? ";
 
     if (regional) {
-        console.log(regional);
-        sql += 'AND REGION NOT LIKE \'45%\' AND REGION NOT LIKE \'46%\' AND REGION NOT LIKE \'40%\'';
+        sql += 'AND REGION NOT LIKE \'45%\' AND REGION NOT LIKE \'46%\' AND REGION NOT LIKE \'40%\' AND REGION NOT LIKE \'41%\' ';
     }
 
     sql += 'GROUP BY REGION, NAPR';

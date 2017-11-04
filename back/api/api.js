@@ -97,9 +97,9 @@ Api.prototype.getYearlyData = function(year, regional) {
                         })
                     }
 
-                    obj[okato] = obj[okato] || fullData;
+                    obj[city] = obj[city] || fullData;
 
-                    obj[okato] = Object.assign(fullData, obj[okato]);
+                    obj[city] = Object.assign(fullData, obj[city]);
 
                 } else {
                     console.log('geocode is not cached: ' + city);
